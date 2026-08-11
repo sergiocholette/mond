@@ -24,9 +24,16 @@ func is_debugged() -> Bool {
 func is_supported() -> Bool {
     let v = ProcessInfo.processInfo.operatingSystemVersion
 
-    return v.majorVersion == 27 &&
-           v.minorVersion == 0 &&
-           v.patchVersion == 0
+    let isIOS266 =
+        v.majorVersion == 26 &&
+        v.minorVersion == 6
+
+    let isIOS27 =
+        v.majorVersion == 27 &&
+        v.minorVersion == 0 &&
+        v.patchVersion == 0
+
+    return isIOS266 || isIOS27
 }
 
 func hasHomeButton() -> Bool {
@@ -38,14 +45,28 @@ func hasHomeButton() -> Bool {
 enum AppPaths {
     static var backups: String {
         let url = backupsURL
-        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+        try? FileManager.default.createDirectory(
+            at: url,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
         return url.path
     }
 
     private static var backupsURL: URL {
-        let baseURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-            ?? URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        return baseURL.appendingPathComponent("backups", isDirectory: true)
+        let baseURL = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first
+            ?? URL(
+                fileURLWithPath: NSTemporaryDirectory(),
+                isDirectory: true
+            )
+
+        return baseURL.appendingPathComponent(
+            "backups",
+            isDirectory: true
+        )
     }
 }
 
